@@ -27,41 +27,20 @@ describe("InvoiceFacade test", () => {
   });
 
   it("should create a invoice", async () => {
-    const invoiceItems = new InvoiceItems({
-      name: "item",
-      price: 2,
-    });
-
-    const address = new Address(
-      "street1",
-      "2",
-      "complemet",
-      "city1",
-      "street1",
-      "zipcode1"
-    );
-
-    const invoiceMock = new Invoice({
-      name: "invoiceName",
-      document: "document1",
-      address: address,
-      items: [invoiceItems],
-    });
-
     const input = {
-      name: invoiceMock.name,
-      document: invoiceMock.document,
-      street: address.street,
-      number: address.number,
-      complement: address.complement,
-      city: address.city,
-      state: address.state,
-      zipCode: address.zipCode,
+      name: "invoiceName",
+      document: "",
+      street: "street1",
+      number: "2",
+      complement: "complemet",
+      city: "city1",
+      state: "state1",
+      zipCode: "zipcode1",
       items: [
         {
-          id: invoiceItems.id.id,
-          name: invoiceItems.name,
-          price: invoiceItems.price,
+          id: "11",
+          name: "itemName",
+          price: 12,
         },
       ],
     };
@@ -71,19 +50,60 @@ describe("InvoiceFacade test", () => {
     const output = await facade.generate(input);
 
     expect(output.id).toBeDefined();
-    expect(output.name).toBe(invoiceMock.name);
-    expect(output.document).toBe(invoiceMock.document);
+    expect(output.name).toBe(input.name);
+    expect(output.document).toBe(input.document);
 
-    expect(output.street).toBe(invoiceMock.address.street);
-    expect(output.state).toBe(invoiceMock.address.state);
-    expect(output.zipCode).toBe(invoiceMock.address.zipCode);
-    expect(output.city).toBe(invoiceMock.address.city);
-    expect(output.complement).toBe(invoiceMock.address.complement);
-    expect(output.number).toBe(invoiceMock.address.number);
+    expect(output.street).toBe(input.street);
+    expect(output.state).toBe(input.state);
+    expect(output.zipCode).toBe(input.zipCode);
+    expect(output.city).toBe(input.city);
+    expect(output.complement).toBe(input.complement);
+    expect(output.number).toBe(input.number);
 
     expect(output.items).toHaveLength(1);
     expect(output.items[0].id).toBeDefined();
-    expect(output.items[0].name).toBe(invoiceItems.name);
-    expect(output.items[0].price).toBe(invoiceItems.price);
+    expect(output.items[0].name).toBe(input.items[0].name);
+    expect(output.items[0].price).toBe(input.items[0].price);
+  });
+
+  it("should find a invoice", async () => {
+    const input = {
+      name: "invoiceName",
+      document: "",
+      street: "street1",
+      number: "2",
+      complement: "complemet",
+      city: "city1",
+      state: "state1",
+      zipCode: "zipcode1",
+      items: [
+        {
+          id: "11",
+          name: "itemName",
+          price: 12,
+        },
+      ],
+    };
+
+    const facade = InvoiceFacadeFactory.create();
+
+    const generateOutput = await facade.generate(input);
+    const output = await facade.find({ id: generateOutput.id });
+
+    expect(output.id).toBe(generateOutput.id);
+    expect(output.name).toBe(input.name);
+    expect(output.document).toBe(input.document);
+
+    expect(output.address.street).toBe(input.street);
+    expect(output.address.state).toBe(input.state);
+    expect(output.address.zipCode).toBe(input.zipCode);
+    expect(output.address.city).toBe(input.city);
+    expect(output.address.complement).toBe(input.complement);
+    expect(output.address.number).toBe(input.number);
+
+    expect(output.items).toHaveLength(1);
+    expect(output.items[0].id).toBe(generateOutput.items[0].id);
+    expect(output.items[0].name).toBe(input.items[0].name);
+    expect(output.items[0].price).toBe(input.items[0].price);
   });
 });

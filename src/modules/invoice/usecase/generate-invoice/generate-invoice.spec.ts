@@ -28,6 +28,7 @@ const invoiceMock = new Invoice({
 const MockRepository = () => {
   return {
     generate: jest.fn().mockReturnValue(Promise.resolve(invoiceMock)),
+    find: jest.fn(),
   };
 };
 

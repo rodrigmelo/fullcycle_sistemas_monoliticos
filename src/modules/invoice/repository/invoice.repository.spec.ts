@@ -73,4 +73,49 @@ describe("Invoice repository test", () => {
     expect(invoiceDb.items[0].name).toBe(invoiceItems.name);
     expect(invoiceDb.items[0].price).toBe(invoiceItems.price);
   });
+
+  it("Should find a invoice", async () => {
+    const invoiceItems = new InvoiceItems({
+      name: "item1",
+      price: 3,
+    });
+
+    const address = new Address(
+      "street2",
+      "3",
+      "complemet2",
+      "city2",
+      "street2",
+      "zipcode2"
+    );
+
+    const invoice = new Invoice({
+      id: new Id("2"),
+      name: "invoiceName1",
+      document: "document2",
+      address: address,
+      items: [invoiceItems],
+    });
+
+    const repository = new InvoiceRepostiory();
+    await repository.generate(invoice);
+
+    const invoiceDb = await repository.find({ id: invoice.id.id });
+
+    expect(invoiceDb.id.id).toBe("2");
+    expect(invoiceDb.document).toBe(invoice.document);
+    expect(invoice.name).toBe(invoice.name);
+
+    expect(invoiceDb.address.street).toBe(invoice.address.street);
+    expect(invoiceDb.address.number).toBe(invoice.address.number);
+    expect(invoiceDb.address.state).toBe(invoice.address.state);
+    expect(invoiceDb.address.zipCode).toBe(invoice.address.zipCode);
+    expect(invoiceDb.address.complement).toBe(invoice.address.complement);
+    expect(invoiceDb.address.city).toBe(invoice.address.city);
+
+    expect(invoiceDb.items).toHaveLength(1);
+    expect(invoiceDb.items[0].id).toBeDefined();
+    expect(invoiceDb.items[0].name).toBe(invoiceItems.name);
+    expect(invoiceDb.items[0].price).toBe(invoiceItems.price);
+  });
 });

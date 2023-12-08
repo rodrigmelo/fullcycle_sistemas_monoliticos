@@ -16,6 +16,9 @@ export default class InvoiceModel extends Model {
   @Column({ allowNull: false })
   id: string;
 
+  @Column({ allowNull: false })
+  name: string;
+
   @Column({ allowNull: false, field: "document" })
   document: string;
 
